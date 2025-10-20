@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question For You 💕</title>
+    <style>
+        /* Design System Variables */
+        :root {
+            /* Custom Romantic Palette */
+            --color-primary-pink: #FFD6E8;
+            --color-secondary-pink: #FFC1D5;
+            --color-soft-white: #FEFEFE;
+            --color-text-dark: #2D2D2D;
+            --color-text-light: #666;
+            --color-success: #FF69B4;
+            --color-shadow: rgba(255, 193, 213, 0.3);
+            --color-shadow-strong: rgba(255, 193, 213, 0.5);
+            --color-shadow-subtle: rgba(255, 193, 213, 0.15);
+            
+            /* Base Design System */
+            --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --space-4: 4px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --space-40: 40px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 50px;
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @font-face {
+            font-family: 'FKGroteskNeue';
+            src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background: linear-gradient(135deg, var(--color-soft-white) 0%, var(--color-primary-pink) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--color-text-dark);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
+        }
+
+        .app-container {
+            position: relative;
+            min-height: 100vh;
+            padding: var(--space-16);
+        }
+
+        /* Avatar Styles */
+        .avatar {
+            position: fixed;
+            bottom: var(--space-24);
+            right: var(--space-24);
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            border: 4px solid var(--color-secondary-pink);
+            z-index: 1000;
+            transition: all var(--duration-normal) var(--ease-bounce);
+            animation: avatarIdle 4s ease-in-out infinite;
+            box-shadow: 0 8px 25px var(--color-shadow), 0 4px 12px var(--color-shadow-subtle);
+            cursor: pointer;
+            object-fit: cover;
+            filter: brightness(1.05) saturate(1.1);
+        }
+
+        .avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px var(--color-shadow-strong), 0 6px 15px var(--color-shadow);
+        }
+
+        @keyframes avatarIdle {
+            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+            25% { transform: translateY(-3px) scale(1.02) rotate(1deg); }
+            50% { transform: translateY(-6px) scale(1.05) rotate(0deg); }
+            75% { transform: translateY(-3px) scale(1.02) rotate(-1deg); }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: linear-gradient(135deg, var(--color-secondary-pink) 0%, var(--color-success) 100%);
+            color: white;
+            padding: var(--space-12) var(--space-16);
+            border-radius: var(--radius-xl);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 220px;
+            margin-bottom: var(--space-12);
+            box-shadow: 0 8px 25px var(--color-shadow), 0 4px 12px var(--color-shadow-subtle);
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            transition: all var(--duration-normal) var(--ease-bounce);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: var(--space-20);
+            border: 10px solid transparent;
+            border-top-color: var(--color-secondary-pink);
+            filter: drop-shadow(0 3px 3px var(--color-shadow-subtle));
+        }
+
+        /* Phase Containers */
+        .phase {
+            display: none;
+            min-height: 100vh;
+            padding: var(--space-32) var(--space-16);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--duration-slow) var(--ease-standard);
+        }
+
+        .phase.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Intro Screen */
+        .intro h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-32);
+            background: linear-gradient(45deg, var(--color-secondary-pink), var(--color-success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--color-secondary-pink) 0%, var(--color-success) 100%);
+            color: white;
+            border: none;
+            padding: var(--space-16) var(--space-32);
+            border-radius: var(--radius-full);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-bounce);
+            box-shadow: 0 6px 20px var(--color-shadow), 0 3px 8px var(--color-shadow-subtle);
+            min-height: 48px;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left var(--duration-slow);
+        }
+
+        .btn:hover:before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, var(--color-success) 0%, var(--color-secondary-pink) 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px var(--color-shadow-strong), 0 5px 15px var(--color-shadow);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98);
+            transition: all var(--duration-fast);
+        }
+
+        /* Gallery Styles */
+        .gallery-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .gallery {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            gap: var(--space-16);
+            padding: var(--space-16) 0;
+            margin-bottom: var(--space-24);
+        }
+
+        .gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .photo-card {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+            text-align: center;
+        }
+
+        .photo-card img {
+            width: 100%;
+            max-width: 320px;
+            height: 420px;
+            object-fit: cover;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 12px 40px var(--color-shadow), 0 6px 20px var(--color-shadow-subtle);
+            margin-bottom: var(--space-20);
+            transition: all var(--duration-normal) var(--ease-standard);
+            opacity: 0;
+            transform: scale(0.9);
+            animation: imageLoad var(--duration-slow) var(--ease-standard) forwards;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes imageLoad {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .photo-card img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 50px var(--color-shadow-strong), 0 8px 25px var(--color-shadow);
+        }
+
+        .photo-caption {
+            font-size: 1.1rem;
+            color: var(--color-text-dark);
+            font-weight: 600;
+            line-height: 1.4;
+            background: rgba(255, 255, 255, 0.9);
+            padding: var(--space-12) var(--space-16);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 15px var(--color-shadow-subtle);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .gallery-dots {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            margin-bottom: var(--space-32);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-text-light);
+            transition: all var(--duration-fast);
+        }
+
+        .dot.active {
+            background: var(--color-secondary-pink);
+            transform: scale(1.2);
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .question {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-xl);
+            padding: var(--space-32);
+            margin-bottom: var(--space-24);
+            box-shadow: 0 12px 40px var(--color-shadow), 0 6px 20px var(--color-shadow-subtle);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--duration-normal) var(--ease-standard);
+        }
+
+        .question:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px var(--color-shadow-strong), 0 8px 25px var(--color-shadow);
+        }
+
+        .question h2 {
+            margin-bottom: var(--space-24);
+            color: var(--color-text-dark);
+            font-size: 1.3rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: var(--space-16);
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--color-primary-pink);
+            border-radius: var(--radius-lg);
+            padding: var(--space-16) var(--space-20);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-bounce);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--color-shadow-subtle);
+            backdrop-filter: blur(5px);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-option:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--color-primary-pink), transparent);
+            transition: left var(--duration-normal);
+            opacity: 0.3;
+        }
+
+        .quiz-option:hover:before {
+            left: 100%;
+        }
+
+        .quiz-option:hover {
+            background: var(--color-primary-pink);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px var(--color-shadow), 0 4px 12px var(--color-shadow-subtle);
+            border-color: var(--color-success);
+        }
+
+        .quiz-option:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .quiz-option.correct {
+            background: var(--color-success);
+            color: white;
+            border-color: var(--color-success);
+        }
+
+        .quiz-option.wrong {
+            background: #ffcccb;
+            border-color: #ff6b6b;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hint {
+            background: var(--color-primary-pink);
+            color: var(--color-text-dark);
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            margin-top: var(--space-16);
+            display: none;
+        }
+
+        .hint.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-primary-pink);
+            border-radius: 4px;
+            margin-bottom: var(--space-24);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-success);
+            width: 0%;
+            transition: width var(--duration-normal);
+        }
+
+        /* Secret Question */
+        .secret-input {
+            width: 100%;
+            max-width: 320px;
+            padding: var(--space-16) var(--space-20);
+            border: 3px solid var(--color-secondary-pink);
+            border-radius: var(--radius-lg);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            margin: var(--space-20) 0;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px var(--color-shadow-subtle);
+            transition: all var(--duration-normal) var(--ease-standard);
+            backdrop-filter: blur(5px);
+            min-height: 48px;
+        }
+
+        .secret-input:focus {
+            outline: none;
+            border-color: var(--color-success);
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.2), 0 6px 20px var(--color-shadow);
+            transform: scale(1.02);
+        }
+
+        /* Final Question */
+        .final-buttons {
+            display: flex;
+            gap: var(--space-24);
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: var(--space-32);
+            position: relative;
+            min-height: 200px;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, var(--color-success) 0%, #FF1493 100%);
+            font-size: 1.3rem;
+            padding: var(--space-20) var(--space-40);
+            animation: pulse 2s infinite;
+            box-shadow: 0 8px 30px var(--color-shadow-strong), 0 4px 15px var(--color-shadow);
+            min-height: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-yes:before {
+            content: '💕';
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: all var(--duration-normal);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .btn-yes:hover:before {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 30px var(--color-shadow-strong), 0 4px 15px var(--color-shadow); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 40px var(--color-shadow-strong), 0 6px 20px var(--color-shadow); }
+        }
+
+        .btn-no {
+            background: #ccc;
+            color: var(--color-text-dark);
+            position: absolute;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+        }
+
+        .btn-no.hidden {
+            display: none;
+        }
+
+        /* Video Player */
+        .video-container {
+            max-width: 500px;
+            width: 100%;
+            margin-top: var(--space-32);
+        }
+
+        video {
+            width: 100%;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 15px 50px var(--color-shadow-strong), 0 8px 25px var(--color-shadow);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--duration-normal) var(--ease-standard);
+        }
+
+        video:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px var(--color-shadow-strong), 0 10px 30px var(--color-shadow);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: var(--space-12);
+            }
+
+            .avatar {
+                width: 70px;
+                height: 70px;
+                bottom: var(--space-20);
+                right: var(--space-20);
+            }
+
+            .speech-bubble {
+                max-width: 180px;
+                font-size: 13px;
+                padding: var(--space-8) var(--space-12);
+            }
+
+            .intro h1 {
+                font-size: 2rem;
+                padding: 0 var(--space-16);
+            }
+
+            .final-buttons {
+                flex-direction: column;
+                gap: var(--space-40);
+                padding: var(--space-16);
+            }
+
+            .photo-card img {
+                max-width: 280px;
+                height: 380px;
+            }
+
+            .btn {
+                min-height: 48px;
+                padding: var(--space-12) var(--space-24);
+                font-size: 1rem;
+            }
+
+            .quiz-option {
+                min-height: 52px;
+                font-size: 0.95rem;
+            }
+
+            .question {
+                padding: var(--space-24);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phase {
+                padding: var(--space-24) var(--space-12);
+            }
+
+            .photo-card img {
+                max-width: 260px;
+                height: 340px;
+            }
+
+            .speech-bubble {
+                max-width: 160px;
+                font-size: 12px;
+            }
+
+            .btn-yes {
+                font-size: 1.1rem;
+                padding: var(--space-16) var(--space-32);
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .avatar {
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover {
+                transform: none;
+            }
+
+            .quiz-option:hover {
+                transform: none;
+            }
+
+            .btn:active {
+                transform: scale(0.95);
+            }
+
+            .quiz-option:active {
+                transform: scale(0.95);
+                background: var(--color-primary-pink);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Avatar with Speech Bubble -->
+        <div class="avatar-container">
+            <img src="Avatar.JPG" alt="Avatar" class="avatar" id="avatar">
+            <div class="speech-bubble" id="speechBubble"></div>
+        </div>
+
+        <!-- Phase 1: Intro -->
+        <div class="phase active" id="intro">
+            <h1>Click to discover something…</h1>
+            <button class="btn" onclick="startGallery()">Discover</button>
+        </div>
+
+        <!-- Phase 1: Gallery -->
+        <div class="phase" id="gallery">
+            <h2 style="margin-bottom: var(--space-32); font-size: 1.5rem;">Our Memories 💕</h2>
+            <div class="gallery-container">
+                <div class="gallery" id="photoGallery">
+                    <div class="photo-card">
+                        <img src="facetime_of_us.jpg" alt="FaceTime calls">
+                        <p class="photo-caption">Our hours of calls that felt like minutes 💬</p>
+                    </div>
+                    <div class="photo-card">
+                        <img src="photo_of_us.jpg" alt="Us together">
+                        <p class="photo-caption">My favourite duo ever 💞</p>
+                    </div>
+                    <div class="photo-card">
+                        <img src="cat.JPG" alt="The cat">
+                        <p class="photo-caption">The true third wheel 😼</p>
+                    </div>
+                    <div class="photo-card">
+                        <img src="photo_of_her.jpg" alt="You being perfect">
+                        <p class="photo-caption">You, being effortlessly perfect ✨</p>
+                    </div>
+                    <div class="photo-card">
+                        <img src="montage.jpg" alt="Montage">
+                        <p class="photo-caption">But something's missing…</p>
+                    </div>
+                </div>
+                <div class="gallery-dots" id="galleryDots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <button class="btn" id="continueBtn" onclick="startQuiz()" style="display: none;">Continue</button>
+            </div>
+        </div>
+
+        <!-- Phase 2: Quiz -->
+        <div class="phase" id="quiz">
+            <h2 style="margin-bottom: var(--space-24); font-size: 1.8rem;">The "Us" Quiz 💭</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="quiz-container" id="quizContainer">
+                <!-- Quiz questions will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Phase 2: Secret Question -->
+        <div class="phase" id="secretQuestion">
+            <h2 style="margin-bottom: var(--space-32); font-size: 1.5rem;">One last question... 😏</h2>
+            <div class="question">
+                <h3>What's my nickname for you when you go to work?</h3>
+                <input type="text" class="secret-input" id="secretInput" placeholder="Enter your answer...">
+                <br><br>
+                <button class="btn" onclick="checkSecretAnswer()">Submit</button>
+                <div class="hint" id="secretHint">Think about our morning routine... 💖</div>
+            </div>
+        </div>
+
+        <!-- Phase 3: Final Question -->
+        <div class="phase" id="finalQuestion">
+            <h1 style="margin-bottom: var(--space-32);">Will you go out with me?</h1>
+            <div class="final-buttons" id="finalButtons">
+                <button class="btn btn-yes" onclick="sayYes()">Yes!</button>
+                <button class="btn btn-no" id="noBtn" onclick="sayNo()">No</button>
+            </div>
+        </div>
+
+        <!-- Phase 3: Success -->
+        <div class="phase" id="success">
+            <canvas class="confetti" id="confettiCanvas"></canvas>
+            <h1 style="margin-bottom: var(--space-24);">I knew you'd say yes! 💕</h1>
+            <div class="video-container">
+                <video controls>
+                    <source src="video_of_us.mp4" type="video/mp4">
+                    Your browser doesn't support video playback.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentPhase = 'intro';
+        let currentPhoto = 0;
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let noClickCount = 0;
+
+        // Quiz Data
+        const quizQuestions = [
+            {
+                question: "Where did everything start?",
+                options: ["Snapchat", "TikTok", "Instagram", "On a random FaceTime"],
+                correct: 1,
+                hint: "TikTok made it happen 😎 the algorithm knew what it was doing."
+            },
+            {
+                question: "Who's taller between us?",
+                options: ["You", "Me", "Same height (barely 😅)", "Our cat when he stretches"],
+                correct: 1,
+                hint: "Can't lie — I'm the tall one 😌 facts only."
+            },
+            {
+                question: "What do we always end up doing when we're together?",
+                options: ["Watching a random movie we don't finish", "Cooking and pretending it's healthy", "Cuddling and smoking", "Fighting over who loves who more"],
+                correct: 2,
+                hint: "Cuddles + smoke = our trademark combo 😌💨❤️"
+            },
+            {
+                question: "Who always ends up saying the funniest things without meaning to?",
+                options: ["Me (obviously)", "You", "Both of us — chaotic energy 😭", "Depends on the day"],
+                correct: 0,
+                hint: "Unintentionally hilarious — it's literally my talent 😎✨"
+            },
+            {
+                question: "What do I always say before you go to work?",
+                options: ["Don't forget your badge!", "Facetime me when you're done!", "Tutututu Dora 💅", "Miss you already 🥺"],
+                correct: 2,
+                hint: "Tutututu Dora 💖 (you already know 😌)"
+            }
+        ];
+
+        const noMessages = [
+            "Are you sure?",
+            "Think again…",
+            "Come on, you know you want to say yes 😭",
+            "Don't make me chase you!",
+            "Okay that's it — only one option left 😌"
+        ];
+
+        // Avatar Speech Bubbles
+        const speechBubbles = {
+            intro: "Hey you 😏 click that button, I've got something to show you…",
+            photo0: "Remember those FaceTime calls? Never-ending and never boring 💕",
+            photo1: "Us together — that smile says everything 🥹",
+            photo2: "Even the cat approves 🐾",
+            photo3: "Okay but how can someone look that good? 😍",
+            photo4: "Hmm… feels like something's missing, right?",
+            quizIntro: "Alright, time to prove you know us for real 😏",
+            correct: "Let's gooo! You nailed it 💕",
+            wrong: "Ehhh... close, but not quite 😭 try again babe!",
+            final: "Tutututu Dora 💖 you did it!",
+            finalQuestion: "Okay… moment of truth 👀",
+            chasing: "Bruh she's trying to escape 😭",
+            yes: "Knew it! Let's gooo 💖",
+            success: "You said yes 😭💗 best day ever."
+        };
+
+        // Speech bubble management
+        function showSpeechBubble(message, duration = 4000) {
+            const bubble = document.getElementById('speechBubble');
+            bubble.textContent = message;
+            bubble.classList.add('show');
+            
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, duration);
+        }
+
+        // Initialize app
+        function init() {
+            setupGalleryScroll();
+            // Show intro comment automatically when page loads
+            setTimeout(() => {
+                showSpeechBubble(speechBubbles.intro, 5000);
+            }, 500);
+        }
+
+        // Phase transitions
+        function showPhase(phase) {
+            document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+            document.getElementById(phase).classList.add('active');
+            currentPhase = phase;
+        }
+
+        // Gallery functions
+        function startGallery() {
+            showPhase('gallery');
+            showSpeechBubble(speechBubbles.photo0);
+        }
+
+        function setupGalleryScroll() {
+            const gallery = document.getElementById('photoGallery');
+            const dots = document.querySelectorAll('.gallery-dots .dot');
+            const continueBtn = document.getElementById('continueBtn');
+
+            gallery.addEventListener('scroll', () => {
+                const scrollLeft = gallery.scrollLeft;
+                const cardWidth = gallery.offsetWidth;
+                const newPhoto = Math.round(scrollLeft / cardWidth);
+                
+                if (newPhoto !== currentPhoto) {
+                    currentPhoto = newPhoto;
+                    updateDots();
+                    showSpeechBubble(speechBubbles[`photo${currentPhoto}`]);
+                    
+                    if (currentPhoto === 4) {
+                        setTimeout(() => {
+                            continueBtn.style.display = 'block';
+                        }, 1000);
+                    }
+                }
+            });
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.gallery-dots .dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentPhoto);
+            });
+        }
+
+        // Quiz functions
+        function startQuiz() {
+            showPhase('quiz');
+            // Show quiz intro comment automatically
+            setTimeout(() => {
+                showSpeechBubble(speechBubbles.quizIntro, 5000);
+            }, 500);
+            setTimeout(() => {
+                renderQuestion();
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quizContainer');
+            const question = quizQuestions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="question">
+                    <h2>Question ${currentQuestion + 1}/5</h2>
+                    <h3>${question.question}</h3>
+                    <div class="quiz-options">
+                        ${question.options.map((option, index) => 
+                            `<div class="quiz-option" onclick="selectAnswer(${index})">${option}</div>`
+                        ).join('')}
+                    </div>
+                    <div class="hint" id="questionHint">${question.hint}</div>
+                </div>
+            `;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            const hint = document.getElementById('questionHint');
+            
+            if (selectedIndex === question.correct) {
+                options[selectedIndex].classList.add('correct');
+                correctAnswers++;
+                showSpeechBubble(speechBubbles.correct);
+                updateProgress();
+                
+                // ALWAYS show hint, even for correct answers
+                hint.classList.add('show');
+                
+                // Show the specific hint after the general congratulation
+                setTimeout(() => {
+                    showSpeechBubble(question.hint);
+                }, 1000);
+                
+                setTimeout(() => {
+                    hint.classList.remove('show');
+                    currentQuestion++;
+                    if (currentQuestion < quizQuestions.length) {
+                        renderQuestion();
+                    } else {
+                        showPhase('secretQuestion');
+                        setTimeout(() => {
+                            showSpeechBubble(speechBubbles.final, 4000);
+                        }, 500);
+                    }
+                }, 3000);
+            } else {
+                options[selectedIndex].classList.add('wrong');
+                hint.classList.add('show');
+                showSpeechBubble(speechBubbles.wrong);
+                
+                setTimeout(() => {
+                    showSpeechBubble(question.hint);
+                }, 1000);
+                
+                setTimeout(() => {
+                    options[selectedIndex].classList.remove('wrong');
+                    hint.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const percentage = (correctAnswers / quizQuestions.length) * 100;
+            progressFill.style.width = percentage + '%';
+        }
+
+        // Secret question
+        function checkSecretAnswer() {
+            const input = document.getElementById('secretInput');
+            const hint = document.getElementById('secretHint');
+            const answer = input.value.toLowerCase().trim();
+            
+            if (answer === 'dora') {
+                showPhase('finalQuestion');
+                // Show final question intro automatically
+                setTimeout(() => {
+                    showSpeechBubble(speechBubbles.finalQuestion, 5000);
+                }, 500);
+            } else {
+                input.value = '';
+                input.style.borderColor = '#ff6b6b';
+                hint.classList.add('show');
+                
+                setTimeout(() => {
+                    input.style.borderColor = '';
+                    hint.classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        // Final question
+        function sayNo() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.querySelector('.btn-yes');
+            
+            if (noClickCount < noMessages.length) {
+                showSpeechBubble(noMessages[noClickCount] || speechBubbles.chasing);
+                
+                // Improved animation: smooth movement across entire viewport
+                const buttonWidth = noBtn.offsetWidth;
+                const buttonHeight = noBtn.offsetHeight;
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                // Calculate safe boundaries (keep button within viewport with padding)
+                const padding = 40;
+                const maxX = viewportWidth - buttonWidth - padding;
+                const maxY = viewportHeight - buttonHeight - padding;
+                
+                // Generate truly random positions across the entire safe viewport
+                const randomX = Math.random() * Math.max(0, maxX - padding) + padding;
+                const randomY = Math.random() * Math.max(0, maxY - padding) + padding;
+                
+                // Get current position to calculate relative movement
+                const currentRect = noBtn.getBoundingClientRect();
+                const currentX = currentRect.left;
+                const currentY = currentRect.top;
+                
+                // Calculate translation needed
+                const translateX = randomX - currentX;
+                const translateY = randomY - currentY;
+                
+                // Apply smooth transition with bounce effect
+                noBtn.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                noBtn.style.transform = `translate(${translateX}px, ${translateY}px) scale(1.1)`;
+                
+                // Scale back to normal after brief moment
+                setTimeout(() => {
+                    noBtn.style.transform = `translate(${translateX}px, ${translateY}px) scale(1)`;
+                }, 100);
+                
+                // Grow Yes button
+                const currentScale = 1 + (noClickCount * 0.1);
+                yesBtn.style.transform = `scale(${currentScale})`;
+                
+                noClickCount++;
+                
+                // Hide No button after 5 clicks
+                if (noClickCount >= 5) {
+                    setTimeout(() => {
+                        noBtn.classList.add('hidden');
+                    }, 400);
+                }
+            }
+        }
+
+        function sayYes() {
+            showSpeechBubble(speechBubbles.yes);
+            setTimeout(() => {
+                showPhase('success');
+                showSpeechBubble(speechBubbles.success);
+                startConfetti();
+            }, 1000);
+        }
+
+        // Confetti animation
+        function startConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#FFD6E8', '#FFC1D5', '#FF69B4', '#FEFEFE'];
+            
+            // Create particles
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: -10 - Math.random() * 100,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: Math.random() * 4 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 3,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 15,
+                    gravity: 0.1,
+                    bounce: 0.7
+                });
+            }
+            
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach((particle, index) => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    particle.vy += particle.gravity;
+                    particle.rotation += particle.rotationSpeed;
+                    
+                    // Bounce off sides
+                    if (particle.x <= 0 || particle.x >= canvas.width) {
+                        particle.vx *= -particle.bounce;
+                        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
+                    }
+                    
+                    ctx.save();
+                    ctx.translate(particle.x, particle.y);
+                    ctx.rotate(particle.rotation * Math.PI / 180);
+                    ctx.fillStyle = particle.color;
+                    ctx.shadowColor = particle.color;
+                    ctx.shadowBlur = 4;
+                    ctx.fillRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
+                    ctx.restore();
+                    
+                    if (particle.y > canvas.height + 50) {
+                        particles.splice(index, 1);
+                    }
+                });
+                
+                if (particles.length > 0) {
+                    requestAnimationFrame(animateConfetti);
+                }
+            }
+            
+            animateConfetti();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Handle Enter key for secret input
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && currentPhase === 'secretQuestion') {
+                checkSecretAnswer();
+            }
+        });
+
+        // Handle window resize for confetti
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confettiCanvas');
+            if (canvas && currentPhase === 'success') {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
